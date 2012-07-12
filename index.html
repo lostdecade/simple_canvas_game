@@ -9,9 +9,31 @@
     <title>Simple Canvas Game</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <script src="js/game.js"></script>
+	<script src="js/curl.js"></script>
+	<script>
+		curl({
+			'baseUrl': '',
+			'paths': {
+				'curl': 'js/curl',
+				'jquery': '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min',
+				'monster.js': 'js/Monster.js',
+				'hero.js': 'js/Hero.js',
+				'game.js': 'js/game.js'
+			}
+		});
+	</script>
+	<script>
+		var Game = Game || {};
+
+		curl(['jquery', 'js!game.js!order', 'js!monster.js!order', 'js!hero.js!order'],
+			function($) {
+				window.goblins = Game.init();
+
+				setInterval(function() { window.goblins.run(); }, 1);
+			}
+		);
+	</script>
 </body>
 </html>

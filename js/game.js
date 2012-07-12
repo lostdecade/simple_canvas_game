@@ -1,10 +1,11 @@
-var Game, Hero, Monster;
-
 //====================================================================================
 //	GAME CLASS
 //====================================================================================
 Game = (function(win, doc){
 
+	/**
+		@constructor
+	*/
 	function Game() {
 		this.canvas = document.createElement('canvas');
 		this.ctx = this.canvas.getContext('2d');
@@ -12,64 +13,104 @@ Game = (function(win, doc){
 		this.canvas.height = 480;
 		this.monstersCaught = 0;
 		this.keysDown = [];
+		this.images = {};
+		this.assetsReady = {
+			'bgImageReady': false,
+			'heroImageReady': false,
+			'monsterImageReady': false
+		};
+
 
 		document.body.appendChild(this.canvas);
 
 		return this;
 	}
 
+	//-----------------------------------------------------------------------------------------------------
+	//	PRIVATE METHODS
+	//-----------------------------------------------------------------------------------------------------
+	/**
+		@function
+		@description
+	*/
 	function handleKeyDown(e) {
 		this.keysDown[e.keyCode] = true;
 	}
 
+	/**
+		@function
+		@description
+	*/
 	function handleKeyUp(e) {
 		delete this.keysDown[e.keyCode];
 	}
+	//-----------------------------------------------------------------------------------------------------
 
+	//-----------------------------------------------------------------------------------------------------
+	//	EVENT HANDLERS
+	//-----------------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------
+
+
+	//-----------------------------------------------------------------------------------------------------
+	//	PUBLIC METHODS
+	//-----------------------------------------------------------------------------------------------------
 	Game.prototype = {
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
 		'init': function() {
-			this.assetsReady = {
-				'bgReady': false,
-				'heroReady': false,
-				'monsterReady': false
-			};
+			this.hero = new win.Game.Hero();
+			this.monster = new win.Game.Monster();
 
-			this.hero = new Hero();
-			this.monster = new Monster()
+			this.
+				attachEvents().
+				loadAssets({
+					'bgImage': 'images/background.png',
+					'heroImage': 'images/hero.png',
+					'monsterImage': 'images/monster.png'
+				}).
+				reset();
 
-			this.attachEvents();
+			this.then = Date.now();
 
 			return this;
 		},
 
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
 		'attachEvents': function() {
 			var that = this;
 
 			addEventListener('keydown', function(e){ handleKeyDown.call(that, e); }, false);
 			addEventListener('keyup', function(e){ handleKeyUp.call(that, e); }, false);
+
+			return this;
 		},
 
-		'loadAssets': function() {
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
+		'loadAssets': function(assets) {
 			var that = this;
 
-			this.bgImage = new Image();
-				this.bgImage.onload = function() {
-					that.assetsReady.bgReady = true;
+			for(var asset in assets) {
+				if(assets.hasOwnProperty(asset)) {
+					(function(){
+						var imageName = asset;
+						that.images[asset] = new Image();
+						that.images[asset].onload = function() { that.assetsReady[imageName + 'Ready'] = true; } ;
+						that.images[asset].src = assets[asset];
+					}());
 				};
-
-			this.heroImage = new Image();
-				this.heroImage.onload = function() {
-					that.assetsReady.heroReady = true;
-				};
-
-			this.monsterImage = new Image();
-				this.monsterImage.onload = function() {
-					that.assetsReady.monsterReady = true;
-				};
-
-			this.bgImage.src = 'images/background.png';
-			this.heroImage.src = 'images/hero.png';
-			this.monsterImage.src = 'images/monster.png';
+			}
 
 			return this;
 		},
@@ -85,17 +126,22 @@ Game = (function(win, doc){
 			return this;
 		},
 
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
 		'render': function() {
-			if(this.assetsReady.bgReady) {
-				this.ctx.drawImage(this.bgImage, 0, 0);
+			if(this.assetsReady.bgImageReady) {
+				this.ctx.drawImage(this.images.bgImage, 0, 0);
 			}
 
-			if(this.assetsReady.heroReady) {
-				this.ctx.drawImage(this.heroImage, this.hero.x, this.hero.y);
+			if(this.assetsReady.heroImageReady) {
+				this.ctx.drawImage(this.images.heroImage, this.hero.x, this.hero.y);
 			}
 
-			if(this.assetsReady.monsterReady) {
-				this.ctx.drawImage(this.monsterImage, this.monster.x, this.monster.y);
+			if(this.assetsReady.monsterImageReady) {
+				this.ctx.drawImage(this.images.monsterImage, this.monster.x, this.monster.y);
 			}
 
 			//Score
@@ -108,6 +154,11 @@ Game = (function(win, doc){
 			return this;
 		},
 
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
 		'update': function(modifier) {
 			//Player is holding up
 			if(38 in this.keysDown) {
@@ -157,6 +208,11 @@ Game = (function(win, doc){
 			return this;
 		},
 
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
 		'run': function() {
 			var now = Date.now(), delta = now - this.then;
 
@@ -168,51 +224,9 @@ Game = (function(win, doc){
 			return this;
 		}
 	};
+	//-----------------------------------------------------------------------------------------------------
 
-	return Game;
-
-}(window, document));
-//====================================================================================
-
-//====================================================================================
-//	HERO CLASS
-//====================================================================================
-Hero = (function(win, doc) {
-
-	function Hero() {
-		this.speed = 256;
-		this.x = 0;
-		this.y = 0;
-	}
-
-	Hero.prototype = {
-
-	};
-
-	return Hero;
+	return new Game();
 
 }(window, document));
 //====================================================================================
-
-//====================================================================================
-//	MONSTER CLASS
-//====================================================================================
-Monster = (function(win, doc) {
-
-	function Monster() {
-		this.x = 0;
-		this.y = 0;
-	}
-
-	Monster.prototype = {
-
-	};
-
-	return Monster;
-
-}(window, document));
-//====================================================================================
-
-var game = new Game().init().loadAssets().reset();
-	game.then = Date.now();
-setInterval(function() { game.run(); }, 1);
