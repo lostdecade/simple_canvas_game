@@ -1,10 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Simple Canvas Game</title>
-	</head>
-	<body>
-		<script src="js/game.js"></script>
-	</body>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Simple Canvas Game</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+</head>
+<body>
+	<script src="js/curl.js"></script>
+	<script>
+		curl({
+			'baseUrl': '',
+			'paths': {
+				'curl': 'js/curl',
+				'jquery': '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min',
+				'monster.js': 'js/Monster.js',
+				'hero.js': 'js/Hero.js',
+				'game.js': 'js/Game.js',
+				'level.js': 'js/Level.js'
+			}
+		});
+	</script>
+	<script>
+		var Game = Game || {};
+
+		curl(['jquery', 'js!game.js!order', 'js!level.js!order', 'js!monster.js!order', 'js!hero.js!order'],
+			function($) {
+				goblins = Game.init();
+				goblins.start();
+
+				window.goblins = goblins;
+
+				setInterval(function() { window.goblins.run(); }, 1);
+			}
+		);
+	</script>
+</body>
 </html>

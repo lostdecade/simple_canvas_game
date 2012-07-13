@@ -1,123 +1,264 @@
-// Create the canvas
-var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
-canvas.width = 512;
-canvas.height = 480;
-document.body.appendChild(canvas);
+//====================================================================================
+//	GAME CLASS
+//====================================================================================
+Game = (function(win, doc){
 
-// Background image
-var bgReady = false;
-var bgImage = new Image();
-bgImage.onload = function () {
-	bgReady = true;
-};
-bgImage.src = "images/background.png";
+	/**
+		@constructor
+	*/
+	function Game() {
+		this.canvas = document.createElement('canvas');
+		this.ctx = this.canvas.getContext('2d');
+		this.canvas.width = 512;
+		this.canvas.height = 480;
+		this.monstersCaught = 0;
+		this.keysDown = [];
+		this.images = {};
+		this.assetsReady = {
+			'bgImageReady': false,
+			'heroImageReady': false,
+			'monsterImageReady': false
+		};
+		//starting level is 0
+		this.currentNumLevel = 0;
+		this.currentLevel = {};
+		this.enemies = [];
 
-// Hero image
-var heroReady = false;
-var heroImage = new Image();
-heroImage.onload = function () {
-	heroReady = true;
-};
-heroImage.src = "images/hero.png";
+		document.body.appendChild(this.canvas);
 
-// Monster image
-var monsterReady = false;
-var monsterImage = new Image();
-monsterImage.onload = function () {
-	monsterReady = true;
-};
-monsterImage.src = "images/monster.png";
-
-// Game objects
-var hero = {
-	speed: 256 // movement in pixels per second
-};
-var monster = {};
-var monstersCaught = 0;
-
-// Handle keyboard controls
-var keysDown = {};
-
-addEventListener("keydown", function (e) {
-	keysDown[e.keyCode] = true;
-}, false);
-
-addEventListener("keyup", function (e) {
-	delete keysDown[e.keyCode];
-}, false);
-
-// Reset the game when the player catches a monster
-var reset = function () {
-	hero.x = canvas.width / 2;
-	hero.y = canvas.height / 2;
-
-	// Throw the monster somewhere on the screen randomly
-	monster.x = 32 + (Math.random() * (canvas.width - 64));
-	monster.y = 32 + (Math.random() * (canvas.height - 64));
-};
-
-// Update game objects
-var update = function (modifier) {
-	if (38 in keysDown) { // Player holding up
-		hero.y -= hero.speed * modifier;
-	}
-	if (40 in keysDown) { // Player holding down
-		hero.y += hero.speed * modifier;
-	}
-	if (37 in keysDown) { // Player holding left
-		hero.x -= hero.speed * modifier;
-	}
-	if (39 in keysDown) { // Player holding right
-		hero.x += hero.speed * modifier;
+		return this;
 	}
 
-	// Are they touching?
-	if (
-		hero.x <= (monster.x + 32)
-		&& monster.x <= (hero.x + 32)
-		&& hero.y <= (monster.y + 32)
-		&& monster.y <= (hero.y + 32)
-	) {
-		++monstersCaught;
-		reset();
-	}
-};
-
-// Draw everything
-var render = function () {
-	if (bgReady) {
-		ctx.drawImage(bgImage, 0, 0);
+	//-----------------------------------------------------------------------------------------------------
+	//	PRIVATE METHODS
+	//-----------------------------------------------------------------------------------------------------
+	/**
+		@function
+		@description
+	*/
+	function handleKeyDown(e) {
+		this.keysDown[e.keyCode] = true;
 	}
 
-	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
+	/**
+		@function
+		@description
+	*/
+	function handleKeyUp(e) {
+		delete this.keysDown[e.keyCode];
 	}
 
-	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);
+	function createHero() {
+		this.hero = new win.Game.Hero();
+		this.hero.x = this.canvas.width / 2;
+		this.hero.y = this.canvas.height / 2;
 	}
 
-	// Score
-	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "24px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
-};
+	function createEnemies() {
+		//setup enemies
+		var numMonsters = this.currentLevel.numEnemies, i = 0;
+		while(i < numMonsters) {
+			this.enemies.push(new win.Game.Monster());
 
-// The main game loop
-var main = function () {
-	var now = Date.now();
-	var delta = now - then;
+			this.enemies[i].x = 32 + (Math.random() * (this.canvas.width - 64));
+			this.enemies[i].y = 32 + (Math.random() * (this.canvas.height - 64));
 
-	update(delta / 1000);
-	render();
+			i++;
+		}
+	}
+	//-----------------------------------------------------------------------------------------------------
 
-	then = now;
-};
+	//-----------------------------------------------------------------------------------------------------
+	//	EVENT HANDLERS
+	//-----------------------------------------------------------------------------------------------------
+	//-----------------------------------------------------------------------------------------------------
 
-// Let's play this game!
-reset();
-var then = Date.now();
-setInterval(main, 1); // Execute as fast as possible
+
+	//-----------------------------------------------------------------------------------------------------
+	//	PUBLIC METHODS
+	//-----------------------------------------------------------------------------------------------------
+	Game.prototype = {
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
+		'init': function() {
+			this.
+				attachEvents().
+				loadAssets({
+					'bgImage': 'images/background.png',
+					'heroImage': 'images/hero.png',
+					'monsterImage': 'images/monster.png'
+				});
+
+			this.then = Date.now();
+
+			return this;
+		},
+
+		'start': function() {
+			//get level configuration
+			this.currentLevel = win.Game.Level.get(this.currentNumLevel);
+
+			//create/recreate hero
+			createHero.call(this);
+
+			//create/recreate enemies
+			createEnemies.call(this);
+		},
+
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
+		'attachEvents': function() {
+			var that = this;
+
+			addEventListener('keydown', function(e){ handleKeyDown.call(that, e); }, false);
+			addEventListener('keyup', function(e){ handleKeyUp.call(that, e); }, false);
+
+			return this;
+		},
+
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
+		'loadAssets': function(assets) {
+			var that = this;
+
+			for(var asset in assets) {
+				if(assets.hasOwnProperty(asset)) {
+					(function(){
+						var imageName = asset;
+						that.images[asset] = new Image();
+						that.images[asset].onload = function() { that.assetsReady[imageName + 'Ready'] = true; } ;
+						that.images[asset].src = assets[asset];
+					}());
+				};
+			}
+
+			return this;
+		},
+
+		'reset': function() {
+
+			return this;
+		},
+
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
+		'render': function() {
+			if(this.assetsReady.bgImageReady) {
+				this.ctx.drawImage(this.images.bgImage, 0, 0);
+			}
+
+			if(this.assetsReady.heroImageReady) {
+				this.ctx.drawImage(this.images.heroImage, this.hero.x, this.hero.y);
+			}
+
+			if(this.assetsReady.monsterImageReady) {
+				for(var i = 0; i < this.enemies.length; i++) {
+					this.ctx.drawImage(this.images.monsterImage, this.enemies[i].x, this.enemies[i].y);
+				}
+			}
+
+			//Score
+			this.ctx.fillStyle = 'rgb(250, 250, 250)';
+			this.ctx.font = '24px Helvetica';
+			this.ctx.textAlign = 'left';
+			this.ctx.textBaseline = 'top';
+			this.ctx.fillText('Goblins Caught: ' + this.monstersCaught, 32, 32);
+
+			return this;
+		},
+
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
+		'update': function(modifier) {
+			//Player is holding up
+			if(38 in this.keysDown) {
+				this.hero.y -= this.hero.speed * modifier;
+			}
+
+			//Player is holding down
+			if(40 in this.keysDown) {
+				this.hero.y += this.hero.speed * modifier;
+			}
+
+			//Player is holding left
+			if(37 in this.keysDown) {
+				this.hero.x -= this.hero.speed * modifier;
+			}
+
+			if(39 in this.keysDown) {
+				this.hero.x += this.hero.speed * modifier;
+			}
+
+			//if the hero hit the left side
+			if(this.hero.x/2 < 0) {
+				this.hero.x = 0;
+			}
+
+			//if the hero hit the right side
+			if(this.hero.x >= this.canvas.width - 32) {
+				this.hero.x = this.canvas.width - 32;
+			}
+
+			//if hero hit the top
+			if(this.hero.y <= 0) {
+				this.hero.y = 0;
+			}
+
+			//if hero hit the bottom
+			if(this.hero.y >= this.canvas.height - 32) {
+				this.hero.y = this.canvas.height - 32;
+			}
+
+			//Are the hero and monsters touching?
+			for(var i = 0; i < this.enemies.length; i++) {
+				if (this.hero.x < (this.enemies[i].x + 32) && this.enemies[i].x < (this.hero.x + 32) && this.hero.y <= (this.enemies[i].y + 32) && this.enemies[i].y <= (this.hero.y + 32)) {
+					this.enemies.splice(i, 1);
+
+					++this.monstersCaught;
+
+					if(this.enemies.length === 0) {
+						this.start();
+					}
+				}
+			}
+
+			return this;
+		},
+
+		/**
+			@function
+			@description
+			@returns {Game}
+		*/
+		'run': function() {
+			var now = Date.now(), delta = now - this.then;
+
+			this.update(delta / 1000);
+			this.render();
+
+			this.then = now;
+
+			return this;
+		}
+	};
+	//-----------------------------------------------------------------------------------------------------
+
+	return new Game();
+
+}(window, document));
+//====================================================================================
