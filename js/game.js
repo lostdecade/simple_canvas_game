@@ -19,7 +19,10 @@ Game = (function(win, doc){
 			'heroImageReady': false,
 			'monsterImageReady': false
 		};
-
+		//starting level is 0
+		this.currentNumLevel = 0;
+		this.currentLevel = {};
+		this.enemies = [];
 
 		document.body.appendChild(this.canvas);
 
@@ -44,6 +47,25 @@ Game = (function(win, doc){
 	function handleKeyUp(e) {
 		delete this.keysDown[e.keyCode];
 	}
+
+	function createHero() {
+		this.hero = new win.Game.Hero();
+		this.hero.x = this.canvas.width / 2;
+		this.hero.y = this.canvas.height / 2;
+	}
+
+	function createEnemies() {
+		//setup enemies
+		var numMonsters = this.currentLevel.numEnemies, i = 0;
+		while(i < numMonsters) {
+			this.enemies.push(new win.Game.Monster());
+
+			this.enemies[i].x = 32 + (Math.random() * (this.canvas.width - 64));
+			this.enemies[i].y = 32 + (Math.random() * (this.canvas.height - 64));
+
+			i++;
+		}
+	}
 	//-----------------------------------------------------------------------------------------------------
 
 	//-----------------------------------------------------------------------------------------------------
@@ -62,21 +84,28 @@ Game = (function(win, doc){
 			@returns {Game}
 		*/
 		'init': function() {
-			this.hero = new win.Game.Hero();
-			this.monster = new win.Game.Monster();
-
 			this.
 				attachEvents().
 				loadAssets({
 					'bgImage': 'images/background.png',
 					'heroImage': 'images/hero.png',
 					'monsterImage': 'images/monster.png'
-				}).
-				reset();
+				});
 
 			this.then = Date.now();
 
 			return this;
+		},
+
+		'start': function() {
+			//get level configuration
+			this.currentLevel = win.Game.Level.get(this.currentNumLevel);
+
+			//create/recreate hero
+			createHero.call(this);
+
+			//create/recreate enemies
+			createEnemies.call(this);
 		},
 
 		/**
@@ -116,12 +145,6 @@ Game = (function(win, doc){
 		},
 
 		'reset': function() {
-			this.hero.x = this.canvas.width / 2;
-			this.hero.y = this.canvas.height / 2;
-
-			// Throw the monster somewhere on the screen randomly
-			this.monster.x = 32 + (Math.random() * (this.canvas.width - 64));
-			this.monster.y = 32 + (Math.random() * (this.canvas.height - 64));
 
 			return this;
 		},
@@ -141,7 +164,9 @@ Game = (function(win, doc){
 			}
 
 			if(this.assetsReady.monsterImageReady) {
-				this.ctx.drawImage(this.images.monsterImage, this.monster.x, this.monster.y);
+				for(var i = 0; i < this.enemies.length; i++) {
+					this.ctx.drawImage(this.images.monsterImage, this.enemies[i].x, this.enemies[i].y);
+				}
 			}
 
 			//Score
@@ -200,9 +225,16 @@ Game = (function(win, doc){
 			}
 
 			//Are the hero and monsters touching?
-			if (this.hero.x < (this.monster.x + 32) && this.monster.x < (this.hero.x + 32) && this.hero.y <= (this.monster.y + 32) && this.monster.y <= (this.hero.y + 32)) {
-				++this.monstersCaught;
-				this.reset();
+			for(var i = 0; i < this.enemies.length; i++) {
+				if (this.hero.x < (this.enemies[i].x + 32) && this.enemies[i].x < (this.hero.x + 32) && this.hero.y <= (this.enemies[i].y + 32) && this.enemies[i].y <= (this.hero.y + 32)) {
+					this.enemies.splice(i, 1);
+
+					++this.monstersCaught;
+
+					if(this.enemies.length === 0) {
+						this.start();
+					}
+				}
 			}
 
 			return this;

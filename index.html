@@ -20,16 +20,20 @@
 				'jquery': '//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min',
 				'monster.js': 'js/Monster.js',
 				'hero.js': 'js/Hero.js',
-				'game.js': 'js/game.js'
+				'game.js': 'js/Game.js',
+				'level.js': 'js/Level.js'
 			}
 		});
 	</script>
 	<script>
 		var Game = Game || {};
 
-		curl(['jquery', 'js!game.js!order', 'js!monster.js!order', 'js!hero.js!order'],
+		curl(['jquery', 'js!game.js!order', 'js!level.js!order', 'js!monster.js!order', 'js!hero.js!order'],
 			function($) {
-				window.goblins = Game.init();
+				goblins = Game.init();
+				goblins.start();
+
+				window.goblins = goblins;
 
 				setInterval(function() { window.goblins.run(); }, 1);
 			}
