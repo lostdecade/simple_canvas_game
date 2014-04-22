@@ -115,9 +115,16 @@ var main = function () {
 	render();
 
 	then = now;
+
+	// Request to do this again ASAP
+	requestAnimationFrame(main);
 };
 
+// Cross-browser support for requestAnimationFrame
+var w = window;
+requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+
 // Let's play this game!
-reset();
 var then = Date.now();
-setInterval(main, 1); // Execute as fast as possible
+reset();
+main();
