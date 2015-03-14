@@ -31,7 +31,7 @@ monsterImage.src = "images/monster.png";
 
 // Game objects
 var hero = {
-	speed: 256 // movement in pixels per second
+	speed: 100 // movement in pixels per second
 };
 var monster = {};
 var monstersCaught = 0;
