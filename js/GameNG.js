@@ -57,18 +57,20 @@ class Game {
     if (39 in this.KeysDown) { // Player holding right
       this.Hero.x += this.Hero.speed * TimeDiff;
     }
-    if(this.Hero.y < 1){
+    if(this.Hero.y < 1){ // Disallow going too Up
       this.Hero.y = 1;
     }
-    if(this.Hero.x < 1){
+    if(this.Hero.x < 1){ // Disallow going too Left
       this.Hero.x = 1;
     }
-    if(this.Hero.x > this.Canvas.width - 36){
+    if(this.Hero.x > this.Canvas.width - 36){ // Disallow going too Right
       this.Hero.x = this.Canvas.width - 36;
     }
-    if(this.Hero.y > this.Canvas.height - 36){
-      this.hero.y = this.Canvas.height - 36;
+    if(this.Hero.y > this.Canvas.height - 36){ // Disallow going too Down
+      this.Hero.y = this.Canvas.height - 36;
     }
+
+    // Check if they both are on the same square
     if (
       this.Hero.x <= (this.Monster.x + 32)
       && this.Monster.x <= (this.Hero.x + 32)
