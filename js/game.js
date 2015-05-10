@@ -31,7 +31,9 @@ monsterImage.src = "images/monster.png";
 
 // Game objects
 var hero = {
-	speed: 256 // movement in pixels per second
+	xspeed: 0, // movement in pixels per second
+	yspeed:0,
+	acc: 200
 };
 var monster = {};
 var monstersCaught = 0;
@@ -59,19 +61,20 @@ var reset = function () {
 
 // Update game objects
 var update = function (modifier) {
+	hero.x+=hero.xspeed * modifier;
+	hero.y+=hero.yspeed * modifier;
 	if (38 in keysDown) { // Player holding up
-		hero.y -= hero.speed * modifier;
+		hero.yspeed -= hero.acc * modifier;
 	}
 	if (40 in keysDown) { // Player holding down
-		hero.y += hero.speed * modifier;
+		hero.yspeed += hero.acc * modifier;
 	}
 	if (37 in keysDown) { // Player holding left
-		hero.x -= hero.speed * modifier;
+		hero.xspeed -= hero.acc * modifier;
 	}
 	if (39 in keysDown) { // Player holding right
-		hero.x += hero.speed * modifier;
+		hero.xspeed += hero.acc * modifier;
 	}
-
 	// Are they touching?
 	if (
 		hero.x <= (monster.x + 32)
