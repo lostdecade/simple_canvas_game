@@ -84,13 +84,33 @@ var update = function (modifier) {
 	if (f==0)
 	{
 		if (hero.xspeed>0)
-			hero.xspeed-=hero.fric * modifier;
+			{
+				if (hero.xspeed<hero.fric * modifier)
+					hero.xspeed=0;
+				else
+					hero.xspeed-=hero.fric * modifier;
+			}
 		if (hero.yspeed>0)
+		{
+			if (hero.yspeed<hero.fric * modifier)
+				hero.yspeed=0;
+			else
 			hero.yspeed-=hero.fric * modifier;
+		}
 		if (hero.xspeed<0)
-			hero.xspeed+=hero.fric * modifier;
+		{
+			if (hero.xspeed>-1*hero.fric * modifier)
+				hero.xspeed=0;
+			else
+				hero.xspeed+=hero.fric * modifier;
+		}	
 		if (hero.yspeed<0)
-			hero.yspeed+=hero.fric * modifier;
+		{
+			if (hero.yspeed>-1*hero.fric * modifier)
+				hero.yspeed=0;
+			else
+				hero.yspeed+=hero.fric * modifier;
+		}	
 	}
 	if (hero.x<0)
 	{
