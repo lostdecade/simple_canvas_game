@@ -31,7 +31,10 @@ monsterImage.src = "images/monster.png";
 
 // Game objects
 var hero = {
-	speed: 256 // movement in pixels per second
+	xspeed: 0, // movement in pixels per second
+	yspeed:0,
+	acc: 200,
+	fric:800
 };
 var monster = {};
 var monstersCaught = 0;
@@ -59,19 +62,77 @@ var reset = function () {
 
 // Update game objects
 var update = function (modifier) {
+	var f=0;
+	hero.x+=hero.xspeed * modifier;
+	hero.y+=hero.yspeed * modifier;
 	if (38 in keysDown) { // Player holding up
-		hero.y -= hero.speed * modifier;
+		hero.yspeed -= hero.acc * modifier;
+		f=1;
 	}
 	if (40 in keysDown) { // Player holding down
-		hero.y += hero.speed * modifier;
+		hero.yspeed += hero.acc * modifier;
+		f=1;
 	}
 	if (37 in keysDown) { // Player holding left
-		hero.x -= hero.speed * modifier;
+		hero.xspeed -= hero.acc * modifier;
+		f=1;
 	}
 	if (39 in keysDown) { // Player holding right
-		hero.x += hero.speed * modifier;
+		hero.xspeed += hero.acc * modifier;
+		f=1;
+	}
+	if (f==0)
+	{
+		if (hero.xspeed>0)
+			{
+				if (hero.xspeed<hero.fric * modifier)
+					hero.xspeed=0;
+				else
+					hero.xspeed-=hero.fric * modifier;
+			}
+		if (hero.yspeed>0)
+		{
+			if (hero.yspeed<hero.fric * modifier)
+				hero.yspeed=0;
+			else
+			hero.yspeed-=hero.fric * modifier;
+		}
+		if (hero.xspeed<0)
+		{
+			if (hero.xspeed>-1*hero.fric * modifier)
+				hero.xspeed=0;
+			else
+				hero.xspeed+=hero.fric * modifier;
+		}	
+		if (hero.yspeed<0)
+		{
+			if (hero.yspeed>-1*hero.fric * modifier)
+				hero.yspeed=0;
+			else
+				hero.yspeed+=hero.fric * modifier;
+		}	
+	}
+	if (hero.x<0)
+	{
+		hero.x=3;
+		hero.xspeed=20;
 	}
 
+	if (hero.x>472)
+	{
+		hero.x=470;
+		hero.xspeed=-20;
+	}
+	if (hero.y<0)
+	{
+		hero.y=3;
+		hero.yspeed=-20;
+	}
+	if (hero.y>445)
+	{
+		hero.y=440;
+		hero.yspeed=20;
+	}
 	// Are they touching?
 	if (
 		hero.x <= (monster.x + 32)
@@ -80,6 +141,8 @@ var update = function (modifier) {
 		&& monster.y <= (hero.y + 32)
 	) {
 		++monstersCaught;
+		hero.xspeed=0;
+		hero.yspeed=0;
 		reset();
 	}
 };
@@ -91,7 +154,7 @@ var render = function () {
 	}
 
 	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
+		ctx.drawImage(heroImage, hero.x, hero.y,40,40);
 	}
 
 	if (monsterReady) {
@@ -104,18 +167,16 @@ var render = function () {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+
 };
 
 // The main game loop
 var main = function () {
 	var now = Date.now();
 	var delta = now - then;
-
 	update(delta / 1000);
 	render();
-
 	then = now;
-
 	// Request to do this again ASAP
 	requestAnimationFrame(main);
 };
