@@ -34,7 +34,7 @@ var hero = {
 	xspeed: 0, // movement in pixels per second
 	yspeed:0,
 	acc: 200,
-	fric:300
+	fric:800
 };
 var monster = {};
 var monstersCaught = 0;
@@ -92,13 +92,33 @@ var update = function (modifier) {
 		if (hero.yspeed<0)
 			hero.yspeed+=hero.fric * modifier;
 	}
+	if (hero.x<0)
+	{
+		hero.x=3;
+		hero.xspeed=20;
+	}
+
+	if (hero.x>472)
+	{
+		hero.x=470;
+		hero.xspeed=-20;
+	}
+	if (hero.y<0)
+	{
+		hero.y=3;
+		hero.yspeed=-20;
+	}
+	if (hero.y>445)
+	{
+		hero.y=440;
+		hero.yspeed=20;
+	}
 	// Are they touching?
 	if (
 		hero.x <= (monster.x + 32)
 		&& monster.x <= (hero.x + 32)
 		&& hero.y <= (monster.y + 32)
 		&& monster.y <= (hero.y + 32)
-		
 	) {
 		++monstersCaught;
 		hero.xspeed=0;
@@ -114,7 +134,7 @@ var render = function () {
 	}
 
 	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
+		ctx.drawImage(heroImage, hero.x, hero.y,40,40);
 	}
 
 	if (monsterReady) {
@@ -127,18 +147,16 @@ var render = function () {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+
 };
 
 // The main game loop
 var main = function () {
 	var now = Date.now();
 	var delta = now - then;
-
 	update(delta / 1000);
 	render();
-
 	then = now;
-
 	// Request to do this again ASAP
 	requestAnimationFrame(main);
 };
