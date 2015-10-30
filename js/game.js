@@ -4,6 +4,9 @@ var downKey = 40;
 var leftKey = 37;
 var rightKey = 39;
 
+//length of game in seconds
+//seconds to play the game
+var gameTime = 20;
 
 // Create the canvas
 var canvas = document.createElement("canvas");
@@ -120,7 +123,22 @@ var render = function () {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Score: " + monstersCaught, 32, 32);
+
+	ctx.textAlign = "right";
+	ctx.fillText(getTime(), canvas.width - 32, 32);
 };
+
+
+var getTime = function(){
+	
+	var thisTime = gameTime - ((Date.now() - startTime)/1000);
+	
+	if(thisTime < 0)
+		thisTime = 0;
+
+	return thisTime.toFixed(2);
+}
+
 
 // The main game loop
 var main = function () {
@@ -132,8 +150,11 @@ var main = function () {
 
 	then = now;
 
-	// Request to do this again ASAP
-	requestAnimationFrame(main);
+	if(now < endTime)
+	{
+		// Request to do this again ASAP
+		requestAnimationFrame(main);
+	}
 };
 
 // Cross-browser support for requestAnimationFrame
@@ -142,5 +163,8 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 
 // Let's play this game!
 var then = Date.now();
+var startTime = then;
+var endTime = then + (gameTime * 1000);
+
 reset();
 main();
