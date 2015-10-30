@@ -1,3 +1,13 @@
+//key Codes
+var upKey = 38;
+var downKey = 40;
+var leftKey = 37;
+var rightKey = 39;
+
+//length of game in seconds
+//seconds to play the game
+var gameTime = 20;
+
 // Create the canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
@@ -59,19 +69,27 @@ var reset = function () {
 
 // Update game objects
 var update = function (modifier) {
-	if (38 in keysDown) { // Player holding up
+
+	//Move up unless they've reached the top of the canvas
+	if (keysDown[upKey] && hero.y >= 0) {
 		hero.y -= hero.speed * modifier;
 	}
-	if (40 in keysDown) { // Player holding down
+
+	//Move down unless they've reached the bottom of the canvas
+	if (keysDown[downKey] && hero.y <= (canvas.height - 32)){ 
 		hero.y += hero.speed * modifier;
 	}
-	if (37 in keysDown) { // Player holding left
+
+	//Move left unless they've reached the left edge of the canvas
+	if (keysDown[leftKey] && hero.x >= 0 ) { 
 		hero.x -= hero.speed * modifier;
 	}
-	if (39 in keysDown) { // Player holding right
+
+	//Move right unless they've reached the right edge of the canvas
+	if (keysDown[rightKey] && hero.x <= (canvas.width - 32)) { 
 		hero.x += hero.speed * modifier;
 	}
-
+	
 	// Are they touching?
 	if (
 		hero.x <= (monster.x + 32)
@@ -83,6 +101,7 @@ var update = function (modifier) {
 		reset();
 	}
 };
+
 
 // Draw everything
 var render = function () {
@@ -103,8 +122,23 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+	ctx.fillText("Score: " + monstersCaught, 32, 32);
+
+	ctx.textAlign = "right";
+	ctx.fillText(getTime(), canvas.width - 32, 32);
 };
+
+
+var getTime = function(){
+	
+	var thisTime = gameTime - ((Date.now() - startTime)/1000);
+	
+	if(thisTime < 0)
+		thisTime = 0;
+
+	return thisTime.toFixed(2);
+}
+
 
 // The main game loop
 var main = function () {
@@ -116,8 +150,11 @@ var main = function () {
 
 	then = now;
 
-	// Request to do this again ASAP
-	requestAnimationFrame(main);
+	if(now < endTime)
+	{
+		// Request to do this again ASAP
+		requestAnimationFrame(main);
+	}
 };
 
 // Cross-browser support for requestAnimationFrame
@@ -126,5 +163,8 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 
 // Let's play this game!
 var then = Date.now();
+var startTime = then;
+var endTime = then + (gameTime * 1000);
+
 reset();
 main();
