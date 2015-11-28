@@ -35,6 +35,7 @@ var hero = {
 };
 var monster = {};
 var monstersCaught = 0;
+var monstersNum = 0;
 
 // Handle keyboard controls
 var keysDown = {};
@@ -80,6 +81,7 @@ var update = function (modifier) {
 		&& monster.y <= (hero.y + 32)
 	) {
 		++monstersCaught;
+        ++monstersNum;
 		reset();
 	}
 };
@@ -103,7 +105,8 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32);
+	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32
+    ctx.fillText("Goblins total: " + monstersNum, 62, 32);
 };
 
 // The main game loop
