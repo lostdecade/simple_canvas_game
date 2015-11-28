@@ -81,7 +81,7 @@ var render = function () {
 		ctx.drawImage(heroImage, hero.x, hero.y);
 	}
 	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster[0].x, monster[0].y);   
+		ctx.drawImage(monsterImage, monster.x, monster.y);   
 	}
 
 	// Score
@@ -110,10 +110,10 @@ var update = function (modifier) {
 
 	// Are they touching?
 	if (
-		hero.x <= (monster[0].x + 32)
-		&& monster[0].x <= (hero.x + 32)
-		&& hero.y <= (monster[0].y + 32)
-		&& monster[0].y <= (hero.y + 32)
+		hero.x <= (monster.x + 32)
+		&& monster.x <= (hero.x + 32)
+		&& hero.y <= (monster.y + 32)
+		&& monster.y <= (hero.y + 32)
 	) {
 		++monstersCaught;
 		reset();
