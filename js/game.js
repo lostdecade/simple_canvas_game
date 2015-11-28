@@ -33,9 +33,15 @@ monsterImage.src = "images/monster.png";
 var hero = {
 	speed: 256 // movement in pixels per second
 };
-var monster = {};
+    
 var monstersCaught = 0;
-var monstersNum = 0;
+var monstersNum = 1;
+var monster = [
+    {'monsterName': 'monster1', 
+    'x' : 50, 
+    'y': 100
+    }
+];
 
 // Handle keyboard controls
 var keysDown = {};
@@ -53,9 +59,38 @@ var reset = function () {
 	hero.x = canvas.width / 2;
 	hero.y = canvas.height / 2;
 
-	// Throw the monster somewhere on the screen randomly
-	monster.x = 32 + (Math.random() * (canvas.width - 64));
-	monster.y = 32 + (Math.random() * (canvas.height - 64));
+    for (var i = 1; i <= monstersNum; i++) {
+        console.log ("monster number = " + monstersNum)
+        // Push monster x, y to array
+        console.log ("i= " + i)
+        monster.push(
+            "monster" + i,
+monster.x = 32 + (Math.random() * (canvas.width - 64)),
+	monster.y = 32 + (Math.random() * (canvas.height - 64)));
+        console.log("print array:  " + monster)
+    }
+monstersNum=monstersNum*2;
+};
+
+// Draw everything
+var render = function () {
+	if (bgReady) {
+		ctx.drawImage(bgImage, 0, 0);
+	}
+	if (heroReady) {
+		ctx.drawImage(heroImage, hero.x, hero.y);
+	}
+	if (monsterReady) {
+		ctx.drawImage(monsterImage, monster[0].x, monster[0].y);   
+	}
+
+	// Score
+	ctx.fillStyle = "rgb(250, 250, 250)";
+	ctx.font = "24px Helvetica";
+	ctx.textAlign = "left";
+	ctx.textBaseline = "top";
+	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32)
+    ctx.fillText("Goblins total: " + monstersNum, 32, 62);
 };
 
 // Update game objects
@@ -75,39 +110,16 @@ var update = function (modifier) {
 
 	// Are they touching?
 	if (
-		hero.x <= (monster.x + 32)
-		&& monster.x <= (hero.x + 32)
-		&& hero.y <= (monster.y + 32)
-		&& monster.y <= (hero.y + 32)
+		hero.x <= (monster[0].x + 32)
+		&& monster[0].x <= (hero.x + 32)
+		&& hero.y <= (monster[0].y + 32)
+		&& monster[0].y <= (hero.y + 32)
 	) {
 		++monstersCaught;
-        ++monstersNum;
 		reset();
 	}
 };
 
-// Draw everything
-var render = function () {
-	if (bgReady) {
-		ctx.drawImage(bgImage, 0, 0);
-	}
-
-	if (heroReady) {
-		ctx.drawImage(heroImage, hero.x, hero.y);
-	}
-
-	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);
-	}
-
-	// Score
-	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "24px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 32, 32
-    ctx.fillText("Goblins total: " + monstersNum, 62, 32);
-};
 
 // The main game loop
 var main = function () {
