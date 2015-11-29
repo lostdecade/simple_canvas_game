@@ -79,7 +79,6 @@ var reset = function () {
         console.log("print array:  " + monster)
         console.log("print specific monster x coords:" + monster[i][1])
     }
-monstersNum=monstersNum*2;
     
 };
 
@@ -135,6 +134,8 @@ var update = function (modifier) {
 		&& monster[i][1] <= (hero.y + 32)
 	) {
 		++monstersCaught;
+        ++monstersNum
+        monster = [50,50]
 		reset();
 	}
     }
