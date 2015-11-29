@@ -29,16 +29,25 @@ monsterImage.onload = function () {
 };
 monsterImage.src = "images/monster.png";
 
+// Squirrel image
+var squirrelReady = false;
+var squirrelImage = new Image();
+squirrelImage.onload = function () {
+	squirrelReady = true;
+};
+squirrelImage.src = "images/squirrel.png";
+
 // Game objects
 var hero = {
 	speed: 256 // movement in pixels per second
 };
-    
+var squirrel = {};
+
 var monstersCaught = 0;
 var monstersNum = 1;
 var monster = [
-    {'monsterName': 'monster1', 
-    'x' : 50, 
+    {'monsterName': 'monster1',
+    'x' : 50,
     'y': 100
     }
 ];
@@ -58,6 +67,10 @@ addEventListener("keyup", function (e) {
 var reset = function () {
 	hero.x = canvas.width / 2;
 	hero.y = canvas.height / 2;
+
+	// Throw the squirrel somewhere on the screen randomly
+ 	squirrel.x = 32 + (Math.random() * (canvas.width - 64));
+ 	squirrel.y = 32 + (Math.random() * (canvas.height - 64));
 
     for (var i = 1; i <= monstersNum; i++) {
         console.log ("monster number = " + monstersNum)
@@ -81,9 +94,11 @@ var render = function () {
 		ctx.drawImage(heroImage, hero.x, hero.y);
 	}
 	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);   
+		ctx.drawImage(monsterImage, monster.x, monster.y);
 	}
-
+	if (squirrelReady) {
+		ctx.drawImage(squirrelImage, squirrel.x, squirrel.y);
+	}
 	// Score
 	ctx.fillStyle = "rgb(250, 250, 250)";
 	ctx.font = "24px Helvetica";
