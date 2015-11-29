@@ -93,9 +93,11 @@ var render = function () {
 	if (heroReady) {
 		ctx.drawImage(heroImage, hero.x, hero.y);
 	}
-	if (monsterReady) {
-		ctx.drawImage(monsterImage, monster.x, monster.y);
-	}
+	for (var i = 0, len = monster.length; i < len; i++) {
+        if (monsterReady) {
+		ctx.drawImage(monsterImage, monster[i][0], monster[i][1]);
+	   }
+    
 	if (squirrelReady) {
 		ctx.drawImage(squirrelImage, squirrel.x, squirrel.y);
 	}
@@ -124,17 +126,18 @@ var update = function (modifier) {
 	}
 
 	// Are they touching?
+	for (var i = 0, len = monster.length; i < len; i++) {
 	if (
-		hero.x <= (monster.x + 32)
-		&& monster.x <= (hero.x + 32)
-		&& hero.y <= (monster.y + 32)
-		&& monster.y <= (hero.y + 32)
+		hero.x <= (monster[i][0] + 32)
+		&& monster[i][0] <= (hero.x + 32)
+		&& hero.y <= (monster[i][1] + 32)
+		&& monster[i][1] <= (hero.y + 32)
 	) {
 		++monstersCaught;
 		reset();
 	}
+    }
 };
-
 
 // The main game loop
 var main = function () {
