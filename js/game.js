@@ -71,7 +71,7 @@ var update = function (modifier) {
 	if (39 in keysDown) { // Player holding right
 		hero.x += hero.speed * modifier;
 	}
-
+	
 	// Are they touching?
 	if (
 		hero.x <= (monster.x + 32)
@@ -82,6 +82,22 @@ var update = function (modifier) {
 		++monstersCaught;
 		reset();
 	}
+	
+	// If player touches (crosses) boundary, then flip him over to the opposite side.
+	// Somewhat like what happens in "Snake" :P
+	if ( hero.x <= 0 ) {
+		hero.x = canvas.width - 10;
+	}
+	if ( hero.x >= canvas.width ) {
+		hero.x = 10;
+	}
+	if ( hero.y <= 0 ) {
+		hero.y = canvas.height - 10;
+	}
+	if ( hero.y >= canvas.height ) {
+		hero.y = 10;
+	}
+	
 };
 
 // Draw everything
