@@ -29,6 +29,15 @@ monsterImage.onload = function () {
 };
 monsterImage.src = "images/monster.png";
 
+// Dino image
+var dinoReady = false;
+var dinoImage = new Image();
+dinoImage.onload = function () {
+	dinoReady = true;
+};
+dinoImage.src = "images/dinosaur.png";
+
+
 // Game objects
 var hero = {
 	speed: 256 // movement in pixels per second
@@ -36,6 +45,7 @@ var hero = {
 var monster = {};
 var monstersCaught = 0;
 
+var dino = {};
 // Handle keyboard controls
 var keysDown = {};
 
@@ -49,12 +59,17 @@ addEventListener("keyup", function (e) {
 
 // Reset the game when the player catches a monster
 var reset = function () {
-	hero.x = canvas.width / 2;
-	hero.y = canvas.height / 2;
 
 	// Throw the monster somewhere on the screen randomly
 	monster.x = 32 + (Math.random() * (canvas.width - 64));
 	monster.y = 32 + (Math.random() * (canvas.height - 64));
+	
+	dino.x = 32 + (Math.random() * (canvas.width - 64));
+	dino.y = 32 + (Math.random() * (canvas.width - 64));
+	dino.width = 10*monstersCaught;
+	dino.height= 10*monstersCaught;
+
+
 };
 
 // Update game objects
@@ -97,6 +112,9 @@ var render = function () {
 	if (monsterReady) {
 		ctx.drawImage(monsterImage, monster.x, monster.y);
 	}
+	if (dinoReady) {
+		ctx.drawImage(dinoImage, dino.x, dino.y,dino.width,dino.height);
+	}
 
 	// Score
 	ctx.fillStyle = "rgb(250, 250, 250)";
@@ -110,6 +128,7 @@ var render = function () {
 var main = function () {
 	var now = Date.now();
 	var delta = now - then;
+
 
 	update(delta / 1000);
 	render();
@@ -127,4 +146,7 @@ requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame
 // Let's play this game!
 var then = Date.now();
 reset();
+hero.x = canvas.width / 2;
+hero.y = canvas.height / 2;
+
 main();
