@@ -53,8 +53,8 @@ var reset = function () {
 	hero.y = canvas.height / 2;
 
 	// Throw the monster somewhere on the screen randomly
-	monster.x = Math.floor((Math.random() * canvas.width + 32);
-	monster.y = Math.floor((Math.random() * canvas.height + 32);
+	monster.x = Math.floor((Math.random() * (canvas.width - 80)) + 32);
+	monster.y = Math.floor((Math.random() * (canvas.height - 80)) + 32);
 };
 
 // Update game objects
@@ -100,10 +100,11 @@ var render = function () {
 
 	// Score
 	ctx.fillStyle = "rgb(250, 250, 250)";
-	ctx.font = "24px Helvetica";
-	ctx.textAlign = "left";
+	ctx.font = "12px Arial";
+	ctx.textAlign = "right";
 	ctx.textBaseline = "top";
-	ctx.fillText("Goblins caught: " + monstersCaught, 128, 128);
+	//ctx.fillText("Catch me if you can", 256, 5);
+	ctx.fillText("Goblins caught: " + monstersCaught, canvas.width - 16, canvas.height - 20);
 };
 
 // The main game loop
