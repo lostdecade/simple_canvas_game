@@ -1,10 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Simple Canvas Game</title>
-	</head>
-	<body>
-		<script src="js/game.js"></script>
-	</body>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="author" content="Pramod Ghuge">
+	<meta name="keywords" content="Vikings, Goblins, adventure, game, dragons, treasure, princess, html5, canvas">
+	<title>Vikings vs Goblin</title>
+	<link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+	<h1>Vikings vs Goblins</h1>
+	<div id="game-wrapper">
+		<div id="game-sidebarright">
+			<div><h3>Time played</h3></div>
+			<div id="timer"></div>
+			<br>
+			<div><h3>Current score</h3></div>
+			<div id="score"></div>
+		</div>
+		<div id="game-sidebarleft">
+			<h3>Instructions</h3>
+			<div>
+				<span class="icon fa fa-arrow-right"></span>
+				move right
+			</div>
+			<div>
+				<span class="icon fa fa-arrow-left"></span>
+				move left
+			</div>
+			<div>
+				<span class="icon fa fa-arrow-up"></span>
+				move up
+			</div>
+			<div>
+				<span class="icon fa fa-arrow-down"></span>
+				move down
+			</div>
+		</div>
+	</div>
+	<script src="js/game.js"></script>
+</body>
+
 </html>
