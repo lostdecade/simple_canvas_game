@@ -1,7 +1,7 @@
 html,
 body {
     background: url('../images/page_background.png') center repeat;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #fff;
     text-align: center;
     margin: 0;
@@ -19,7 +19,7 @@ body {
     right: -130px;
     height: 200px;
     padding: 0 10px;
-    text-align: center;
+    text-align: left;
 }
 #game-sidebarleft {
     position: absolute;
@@ -27,7 +27,7 @@ body {
     left: -140px;
     height: 200px;
     padding: 0 10px;
-    text-align: center;
+    text-align: left;
 }
 h1 {
     font-size: 32px;
