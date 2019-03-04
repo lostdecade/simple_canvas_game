@@ -1,0 +1,50 @@
+html,
+body {
+    background: url('../images/page_background.png') center repeat;
+    font-family: 'Open Sans', sans-serif;
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+#game-wrapper {
+    position: relative;
+    width: 512px;
+    height: 480px;
+    margin: 25px auto;
+}
+#game-sidebarright {
+    position: absolute;
+    top: 0;
+    right: -130px;
+    height: 200px;
+    padding: 0 10px;
+    text-align: center;
+}
+#game-sidebarleft {
+    position: absolute;
+    top: 0;
+    left: -140px;
+    height: 200px;
+    padding: 0 10px;
+    text-align: center;
+}
+h1 {
+    font-size: 32px;
+    font-weight: normal;
+    margin: 0;
+    padding: 0 0 10px 0;
+}
+h3 {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 0;
+    padding: 0 0 10px 0;
+}
+div {
+    font-size: 12px;
+    text-align: left;
+}
+.icon {
+    padding: 10px;
+}
